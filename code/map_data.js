@@ -242,7 +242,7 @@ window.renderPortal = function(ent) {
     u = u || oo.level !== portalLevel;
     
     // Allow plugins to add additional conditions as to when a portal gets re-rendered
-    var hookData = {portal: ent[2], reRender: false};
+    var hookData = {portal: ent[2], oldPortal : oo.details, reRender: false};
     runHooks('doesPortalNeedReRendering', hookData);
     u = u || hookData.reRender;
     

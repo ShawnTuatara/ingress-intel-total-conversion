@@ -32,11 +32,12 @@
 //              processed raw ajax response as well as the processed
 //              chat data that is going to be used for display.
 // doesPortalNeedReRendering: the callback argument is
-//              {portal: ent[2], reRender : false}. The callback needs
-//              to update the value of reRender to true if the plugin
-//              has a reason to have the portal redrawn. It is called
-//              at the start of code/map_data.js#renderPortal
-//              as long as there was an old portal for the guid.
+//              {portal: ent[2], oldPortal : d, reRender : false}.
+//              The callback needs to update the value of reRender to
+//              true if the plugin has a reason to have the portal
+//              redrawn. It is called early on in the
+//              code/map_data.js#renderPortal as long as there was an
+//              old portal for the guid.
 // portalOptions: the callback argument is
 //              {portal : ent[2], portalOptions : {}}. The callback
 //              needs to update the portalOptions with a hash of valid
@@ -66,7 +67,7 @@ window.runHooks = function(event, data) {
     return;
   $.each(_hooks[event], function(ind, callback) {
     if (callback(data) === true) {
-      // break the .each() loop as a plugin has something to give back to the calling function
+      // break the .each() loop as a plugin has asked to stop the chain
       return false;
     }
   });
