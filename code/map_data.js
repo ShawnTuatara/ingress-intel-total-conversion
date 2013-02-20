@@ -222,6 +222,13 @@ window.renderPortal = function(ent) {
   if(portalLevel < getMinPortalLevel()  && ent[0] !== selectedPortal)
     return removeByGuid(ent[0]);
 
+  // Allow plugins to hide portals
+  var hookData = {portal: ent[2], hidePortal : false};
+  runHooks('hidePortal', hookData);
+  if (hookData.hidePortal === true) {
+    return removeByGuid(ent[0]);
+  }
+  
   var team = getTeam(ent[2]);
 
   // do nothing if portal did not change
@@ -235,7 +242,9 @@ window.renderPortal = function(ent) {
     u = u || oo.level !== portalLevel;
     
     // Allow plugins to add additional conditions as to when a portal gets re-rendered
-    u = u || runHooks('doesPortalNeedReRendering', ent[2]);
+    var hookData = {portal: ent[2], reRender: false};
+    runHooks('doesPortalNeedReRendering', hookData);
+    u = u || hookData.reRender;
     
     // nothing changed that requires re-rendering the portal.
     if(!u) {
@@ -270,10 +279,9 @@ window.renderPortal = function(ent) {
     clickable : true
   };
   
-  var pluginPortalOptions = runHooks('portalOptions', ent[2]);
-  pluginPortalOptions = pluginPortalOptions === null ? {} : pluginPortalOptions;
-  
-  var portalOptions = $.extend({}, defaultPortalOptions, pluginPortalOptions);
+  var hookData = {portal: ent[2], portalOptions: {}};
+  runHooks('portalOptions', hookData);
+  var portalOptions = $.extend({}, defaultPortalOptions, hookData.portalOptions);
   
   // Add important values that are needed for later (not CircleMarker options)
   portalOptions.level = portalLevel;
