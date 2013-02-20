@@ -223,7 +223,7 @@ window.renderPortal = function(ent) {
     return removeByGuid(ent[0]);
 
   // Allow plugins to hide portals
-  var hookData = {portal: ent[2], hidePortal : false};
+  var hookData = {portal: ent[2], hidePortal: false};
   runHooks('hidePortal', hookData);
   if (hookData.hidePortal === true) {
     return removeByGuid(ent[0]);
@@ -242,7 +242,7 @@ window.renderPortal = function(ent) {
     u = u || oo.level !== portalLevel;
     
     // Allow plugins to add additional conditions as to when a portal gets re-rendered
-    var hookData = {portal: ent[2], oldPortal : oo.details, reRender: false};
+    var hookData = {portal: ent[2], oldPortal: oo.details, reRender: false};
     runHooks('doesPortalNeedReRendering', hookData);
     u = u || hookData.reRender;
     
