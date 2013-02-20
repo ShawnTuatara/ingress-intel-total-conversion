@@ -38,40 +38,28 @@
 //              redrawn. It is called early on in the
 //              code/map_data.js#renderPortal as long as there was an
 //              old portal for the guid.
-// portalOptions: the callback argument is
-//              {portal : ent[2], portalOptions : {}}. The callback
-//              needs to update the portalOptions with a hash of valid
-//              CircleMarker options that the plugin wants to modify.
-//              Hook is called as part of the
-//              code/map_data.js#renderPortal just prior to creating the
-//              CircleMarker object. Allows for a plugin to manipulate
-//              how the portal will be rendered.
-//              (http://leafletjs.com/reference.html#circlemarker)
 // hidePortal:  the callback argument is
 //              {portal : ent[2], hidePortal : false}. The callback
 //              needs to update the hidePortal property to true if the
 //              plugin wants the portal hidden from the map.
 
-window._hooks = {};
 
-// All portal rendering hooks happen during the code/map_data.js#renderPortal function
-window.PORTAL_RENDERING_HOOKS = [ 'hidePortal', 'doesPortalNeedReRendering', 'portalOptions', 'portalAdded' ];
-
-window.VALID_HOOKS = [ 'portalDetailsUpdated', 'publicChatDataAvailable' ].concat(window.PORTAL_RENDERING_HOOKS);
+window._hooks = {}
+window.VALID_HOOKS = ['portalAdded', 'portalDetailsUpdated',
+  'publicChatDataAvailable', 'doesPortalNeedReRendering', 'hidePortal'];
 
 window.runHooks = function(event, data) {
-  if (VALID_HOOKS.indexOf(event) === -1)
-    throw ('Unknown event type: ' + event);
+  if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);
 
-  if (!_hooks[event])
-    return;
+  if(!_hooks[event]) return;
   $.each(_hooks[event], function(ind, callback) {
     if (callback(data) === true) {
       // break the .each() loop as a plugin has asked to stop the chain
       return false;
     }
   });
-};
+}
+
 
 window.addHook = function(event, callback) {
   if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);

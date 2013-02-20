@@ -266,30 +266,21 @@ window.renderPortal = function(ent) {
   // pre-loads player names for high zoom levels
   loadPlayerNamesForPortal(ent[2]);
 
-  var lvWeight = Math.max(portalLevel / 1.5, 2);
+  var lvWeight = Math.max(2, portalLevel / 1.5);
   var lvRadius = Math.max(portalLevel + 3, 5);
 
-  var defaultPortalOptions = {
-    radius : lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
-    color : ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
-    opacity : 1,
-    weight : lvWeight,
-    fillColor : COLORS[team],
-    fillOpacity : 0.5,
-    clickable : true
-  };
-  
-  var hookData = {portal: ent[2], portalOptions: {}};
-  runHooks('portalOptions', hookData);
-  var portalOptions = $.extend({}, defaultPortalOptions, hookData.portalOptions);
-  
-  // Add important values that are needed for later (not CircleMarker options)
-  portalOptions.level = portalLevel;
-  portalOptions.team = team;
-  portalOptions.details = ent[2];
-  portalOptions.guid = ent[0];
-  
-  var p = L.circleMarker(latlng, portalOptions);
+  var p = L.circleMarker(latlng, {
+    radius: lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
+    color: ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
+    opacity: 1,
+    weight: lvWeight,
+    fillColor: COLORS[team],
+    fillOpacity: 0.5,
+    clickable: true,
+    level: portalLevel,
+    team: team,
+    details: ent[2],
+    guid: ent[0]});
 
   p.on('remove', function() {
     var portalGuid = this.options.guid
