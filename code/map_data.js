@@ -229,8 +229,14 @@ window.renderPortal = function(ent) {
   var old = findEntityInLeaflet(layerGroup, window.portals, ent[0]);
   if(old) {
     var oo = old.options;
+    
+    // Default checks to see if a portal needs to be re-rendered
     var u = oo.team !== team;
     u = u || oo.level !== portalLevel;
+    
+    // Allow plugins to add additional conditions as to when a portal gets re-rendered
+    u = u || runHooks('doesPortalNeedReRendering', ent[2]);
+    
     // nothing changed that requires re-rendering the portal.
     if(!u) {
       // let resos handle themselves if they need to be redrawn
@@ -251,21 +257,31 @@ window.renderPortal = function(ent) {
   // pre-loads player names for high zoom levels
   loadPlayerNamesForPortal(ent[2]);
 
-  var lvWeight = Math.max(2, portalLevel / 1.5);
+  var lvWeight = Math.max(portalLevel / 1.5, 2);
   var lvRadius = Math.max(portalLevel + 3, 5);
 
-  var p = L.circleMarker(latlng, {
-    radius: lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
-    color: ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
-    opacity: 1,
-    weight: lvWeight,
-    fillColor: COLORS[team],
-    fillOpacity: 0.5,
-    clickable: true,
-    level: portalLevel,
-    team: team,
-    details: ent[2],
-    guid: ent[0]});
+  var defaultPortalOptions = {
+    radius : lvRadius + (L.Browser.mobile ? PORTAL_RADIUS_ENLARGE_MOBILE : 0),
+    color : ent[0] === selectedPortal ? COLOR_SELECTED_PORTAL : COLORS[team],
+    opacity : 1,
+    weight : lvWeight,
+    fillColor : COLORS[team],
+    fillOpacity : 0.5,
+    clickable : true
+  };
+  
+  var pluginPortalOptions = runHooks('portalOptions', ent[2]);
+  pluginPortalOptions = pluginPortalOptions === null ? {} : pluginPortalOptions;
+  
+  var portalOptions = $.extend({}, defaultPortalOptions, pluginPortalOptions);
+  
+  // Add important values that are needed for later (not CircleMarker options)
+  portalOptions.level = portalLevel;
+  portalOptions.team = team;
+  portalOptions.details = ent[2];
+  portalOptions.guid = ent[0];
+  
+  var p = L.circleMarker(latlng, portalOptions);
 
   p.on('remove', function() {
     var portalGuid = this.options.guid

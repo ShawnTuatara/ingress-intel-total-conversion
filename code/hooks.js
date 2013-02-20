@@ -11,7 +11,7 @@
 //
 // Boot hook: booting is handled differently because IITC may not yet
 //            be available. Have a look at the plugins in plugins/. All
-//            code before “// PLUGIN START” and after “// PLUGIN END” os
+//            code before “// PLUGIN START” and after “// PLUGIN END” is
 //            required to successfully boot the plugin.
 //
 // Here’s more specific information about each event:
@@ -30,21 +30,45 @@
 //              yet been displayed. The data hash contains both the un-
 //              processed raw ajax response as well as the processed
 //              chat data that is going to be used for display.
+// doesPortalNeedReRendering: hook is passed the portal details (ent[2]).
+//              It is called at the start of code/map_data.js#renderPortal
+//              as long as there was an old portal for the guid.
+//              Return true from the hook if the portal needs to be re-
+//              rendered.
+// portalOptions: hook is passed the portal details (ent[2]). Hook is
+//              called as part of the code/map_data.js#renderPortal just
+//              prior to creating the CircleMarker object. Allows for a
+//              plugin to manipulate how the portal will be rendered.
+//              Hook callback should return the parts of a CircleMarker's
+//              options that the plugin wants to modify. Other properties
+//              will be kept as the default renderPortal values.
+//              (http://leafletjs.com/reference.html#circlemarker)
 
+window._hooks = {};
+window.VALID_HOOKS = [ 'portalAdded', 'portalDetailsUpdated', 'publicChatDataAvailable', 'doesPortalNeedReRendering', 'portalOptions' ];
 
-window._hooks = {}
-window.VALID_HOOKS = ['portalAdded', 'portalDetailsUpdated',
-  'publicChatDataAvailable'];
-
+// Allows for a plugin to return something to the calling function by
+// returning that value from the hook callback. If no data has been provided
+// by the hook callback then null is returned
 window.runHooks = function(event, data) {
-  if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);
+  if (VALID_HOOKS.indexOf(event) === -1)
+    throw ('Unknown event type: ' + event);
 
-  if(!_hooks[event]) return;
+  var hookResponse = null;
+  if (!_hooks[event])
+    return;
   $.each(_hooks[event], function(ind, callback) {
-    callback(data);
+    hookResponse = callback(data);
+    if (hookResponse !== undefined && hookResponse !== null) {
+      // break the .each() loop as a plugin has something to give back to the calling function
+      return false;
+    }
+    
+    hookResponse = null;
   });
-}
 
+  return hookResponse;
+};
 
 window.addHook = function(event, callback) {
   if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);
