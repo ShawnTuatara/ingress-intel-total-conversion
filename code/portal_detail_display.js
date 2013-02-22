@@ -34,7 +34,7 @@ window.renderPortalDetails = function(guid) {
   // collect and html-ify random data
   var randDetails = [
     playerText, sinceText, getRangeText(d), getEnergyText(d),
-    linksText, getAvgResoDistText(d), linkedFields, getDestroyAP(d)
+    linksText, getAvgResoDistText(d), linkedFields, getAttackApGainText(d)
   ];
   randDetails = '<table id="randdetails">' + genFourColumnTable(randDetails) + '</table>';
 
@@ -47,6 +47,8 @@ window.renderPortalDetails = function(guid) {
   var lng = d.locationE6.lngE6;
   var perma = 'http://ingress.com/intel?latE6='+lat+'&lngE6='+lng+'&z=17&pguid='+guid;
   var imgTitle = 'title="'+getPortalDescriptionFromDetails(d)+'\n\nClick to show full image."';
+	var gmaps = 'https://maps.google.com/?q='+lat/1E6+','+lng/1E6;
+  var postcard = 'Send in a postcard. Will put it online after receiving. Address:\\n\\nStefan Breunig\\nINF 305 – R045\\n69120 Heidelberg\\nGermany';
 
   $('#portaldetails')
     .attr('class', TEAM_TO_CSS[getTeam(d)])
@@ -60,8 +62,9 @@ window.renderPortalDetails = function(guid) {
       + '<div class="mods">'+getModDetails(d)+'</div>'
       + randDetails
       + resoDetails
-      + '<div class="linkdetails">'
-      + '<aside><a href="'+perma+'">portal link</a></aside>'
+      + '<div class="linkdetails">'+ '<aside><a href="'+perma+'">portal link</a></aside>'
+      + '<aside><a href="'+gmaps+'" target="_blank">gmaps</a></aside>'
+      + '<aside><a onclick="alert(\''+postcard+'\');">donate</a></aside>'
       + '<aside><a onclick="window.reportPortalIssue()">report issue</a></aside>'
       + '</div>'
     );

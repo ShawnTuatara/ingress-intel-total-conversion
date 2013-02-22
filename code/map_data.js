@@ -127,6 +127,8 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
 
   // Preserve and restore "selectedPortal" between portal re-render
   if(portalUpdateAvailable) var oldSelectedPortal = selectedPortal;
+  
+  runHooks('portalDataLoaded', {portals : ppp});
   $.each(ppp, function(ind, portal) { renderPortal(portal); });
 
   var selectedPortalLayer = portals[oldSelectedPortal];
@@ -243,7 +245,7 @@ window.renderPortal = function(ent) {
     
     // Allow plugins to add additional conditions as to when a portal gets re-rendered
     var hookData = {portal: ent[2], oldPortal: oo.details, reRender: false};
-    runHooks('doesPortalNeedReRendering', hookData);
+    runHooks('beforePortalReRender', hookData);
     u = u || hookData.reRender;
     
     // nothing changed that requires re-rendering the portal.

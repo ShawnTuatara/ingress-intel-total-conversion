@@ -28,6 +28,9 @@ Please follow the these guidelines. Some are just preference, others are good pr
 - jQuery is your friend
 - indent using two spaces
 - opening brace on the same line with a space after the if/for/etc: `if(blub) {`
+- else clauses: `} else if(blub) {` or `} else {`
+- comments: `// this is a comment`
+- quotes: Use single-quotes for JavaScript and double-quotes for HTML content. Example: `$('body').append('<div id="soup">Soup!</div>');`.
 - there is no length limit on lines, but try to keep them short where suitable
 
 
@@ -35,11 +38,12 @@ Sending patches
 ---------------
 
 - use GitHub and git to fork the repository
+- match the code style as shown above
 - use [GitHub’s pull request feature](https://help.github.com/articles/using-pull-requests) to submit patches easily
 - use one pull request for one feature – don’t put many things into one request. This makes reviewing harder for me.
 - you can use `git add -p` to selectively add parts to a commit. This allows for clear commit messages instead of “implement everything” ones.
 
-For plugins this is less strict, but I still review those.
+~~For plugins this is less strict, but I still review those.~~ It applies to plugins as well.
 
 
 Debugging

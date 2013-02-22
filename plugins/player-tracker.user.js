@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             iitc-plugin-player-tracker@breunigs
 // @name           iitc: player tracker
-// @version        0.2
+// @version        0.4
 // @namespace      https://github.com/breunigs/ingress-intel-total-conversion
 // @updateURL      https://raw.github.com/breunigs/ingress-intel-total-conversion/gh-pages/plugins/player-tracker.user.js
 // @downloadURL    https://raw.github.com/breunigs/ingress-intel-total-conversion/gh-pages/plugins/player-tracker.user.js
@@ -79,7 +79,7 @@ window.plugin.playerTracker.processNewData = function(data) {
         // Destroy link messages depend on how the link was originally
         // created. Therefore it’s not clear which portal the player is
         // at, so ignore it.
-        if(markup[1].plain.indexOf('destroyed') !== -1) {
+        if(markup[1].plain.indexOf('destroyed the Link') !== -1) {
           skipThisMessage = true;
           return false;
         }
@@ -234,7 +234,8 @@ window.plugin.playerTracker.drawData = function() {
       weight: 2-0.25*i,
       color: '#FF00FD',
       clickable: false,
-      opacity: 1-0.2*i
+      opacity: 1-0.2*i,
+      dashArray: "5,8"
     };
 
     L.multiPolyline(polyLine, opts).addTo(layer);
